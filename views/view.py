@@ -30,6 +30,7 @@ def MainWindow(page: ft.Page):
             )
 
         elif page.route == "/create_task":
+
             page.views.append(
                 ft.View(
                     route="/create_task",

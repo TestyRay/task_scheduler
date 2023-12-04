@@ -1,7 +1,7 @@
 import flet as ft
 
 from views import MainWindow
-from database import setup_database, add_category
+from database import setup_database
 
 
 def main():

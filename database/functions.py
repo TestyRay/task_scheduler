@@ -1,44 +1,25 @@
 import sqlite3
-
 from typing import List, Dict
 
+from .models import categories_table, tasks_table
 
-# Функция для создания базы данных и таблиц
 def setup_database():
+    """
+    Инициализирует базу данных приложения. Создает таблицы 'categories' и 'tasks', а также
+    добавляет начальные категории ('Личные', 'Работа', 'Учеба').
+    """
     conn = sqlite3.connect('organizer.db')
     cursor = conn.cursor()
 
-    # Создание таблицы categories
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS categories (
-        id INTEGER PRIMARY KEY,
-        name TEXT NOT NULL UNIQUE
-    )
-    """)
+    cursor.execute(categories_table)
+    cursor.execute(tasks_table)
 
-    # Создание таблицы tasks с полем category_id
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS tasks (
-        id INTEGER PRIMARY KEY,
-        name TEXT NOT NULL,
-        description TEXT,
-        creation_date TEXT NOT NULL,
-        due_date TEXT,
-        priority INTEGER NOT NULL,
-        status TEXT NOT NULL,
-        category_id INTEGER,
-        FOREIGN KEY (category_id) REFERENCES categories(id)
-    )
-    """)
-
-    # Добавление начальных категорий
     initial_categories = ["Личные", "Работа", "Учеба"]
     for category in initial_categories:
         cursor.execute("INSERT OR IGNORE INTO categories (name) VALUES (?)", (category,))
 
     conn.commit()
     conn.close()
-
 
 # Функция для добавления категории
 def add_category(name):

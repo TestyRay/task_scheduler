@@ -1,3 +1,6 @@
-from .db import setup_database, add_category
+from .functions import setup_database, fetch_categories
 
-__all__ = ['setup_database', 'add_category']
+__all__ = [
+    'setup_database',
+    'fetch_categories',
+]

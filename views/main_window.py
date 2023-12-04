@@ -1,7 +1,7 @@
 import pymorphy3
 import flet as ft
 
-from database.db import fetch_categories
+from database import fetch_categories
 
 HEADER_COLOR_TEXT = "#FFFFFF"
 WIDGET_COLOR = "#041965"
@@ -40,6 +40,7 @@ def main_window_view(page: ft.Page) -> ft.Container:
                 width=187,
                 height=110,
                 padding=20,
+                # on_click= lambda _: page.go(""),
                 content=ft.Column(
                     controls=[
                         ft.Text(value=f'{task_count} {task_word}'),
@@ -70,7 +71,50 @@ def main_window_view(page: ft.Page) -> ft.Container:
     # Сборка отображения заданий
     task = ft.Column(
         height=400,
-        scroll="ALWAYS"
+        scroll="ALWAYS",
+        controls=[
+            ft.Container(
+                height=220,
+                width=600,
+                padding=ft.padding.only(
+                    top=80,
+                ),
+                alignment=ft.alignment.center,
+                # bgcolor=WIDGET_COLOR,
+                content=ft.Icon(
+                    name=ft.icons.STAR_BORDER_ROUNDED,
+                    color=ft.colors.GREY,
+                    size=150,
+                ),
+            ),
+            ft.Container(
+                height=50,
+                width=600,
+                alignment=ft.alignment.center,
+                # bgcolor=WIDGET_COLOR,
+                content=ft.Text(
+                    value="Нет задач",
+                    weight=ft.FontWeight.BOLD,
+                    color=ft.colors.GREY,
+                    size=24,
+                ),
+            ),
+            ft.Container(
+                height=50,
+                width=600,
+                alignment=ft.alignment.center,
+                # bgcolor=WIDGET_COLOR,
+                content=ft.Text(
+                    value="Нажмите кнопку +, чтобы создать задачу",
+                    color=ft.colors.GREY,
+                    size=18,
+                ),
+            ),
+            ft.Container(
+                height=600,
+                width=600,
+            ),
+        ]
     )
 
     for i in range(10):
