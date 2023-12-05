@@ -3,12 +3,15 @@ from typing import List, Dict
 
 from .models import categories_table, tasks_table
 
+DATABASE = "organizer.db"
+
+
 def setup_database():
     """
     Инициализирует базу данных приложения. Создает таблицы 'categories' и 'tasks', а также
     добавляет начальные категории ('Личные', 'Работа', 'Учеба').
     """
-    conn = sqlite3.connect('organizer.db')
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     cursor.execute(categories_table)
@@ -16,23 +19,55 @@ def setup_database():
 
     initial_categories = ["Личные", "Работа", "Учеба"]
     for category in initial_categories:
-        cursor.execute("INSERT OR IGNORE INTO categories (name) VALUES (?)", (category,))
+        add_category(
+            category_name=category,
+            insert_or_ignore=True,
+        )
 
     conn.commit()
     conn.close()
 
-# Функция для добавления категории
-def add_category(name):
-    conn = sqlite3.connect('organizer.db')
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO categories (name) VALUES (?)", (name,))
-    conn.commit()
-    conn.close()
+
+def add_category(category_name: str, insert_or_ignore: bool = False) -> tuple:
+    """
+    Добавляет новую категорию в базу данных.
+
+    :param category_name: Название категории, которую нужно добавить.
+    :param insert_or_ignore: Если True, то команда INSERT будет выполнена с ключевым словом OR IGNORE,
+                             что позволяет избежать ошибок при попытке добавить дублирующуюся категорию.
+                             По умолчанию False.
+    :return: Кортеж (bool, str), где первый элемент - флаг успешности операции, второй - описание ошибки, если она произошла.
+    """
+    conn = None
+    try:
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+
+        if insert_or_ignore:
+            cursor.execute("INSERT OR IGNORE INTO categories (name) VALUES (?)", (category_name,))
+        else:
+            cursor.execute("INSERT INTO categories (name) VALUES (?)", (category_name,))
+
+        conn.commit()
+        return True, None  # Возвращает True, если нет ошибок
+
+    except sqlite3.IntegrityError as e:
+        if "UNIQUE constraint failed" in str(e):
+            return False, "Название категории должно быть уникальным."
+        else:
+            return False, str(e)  # Возвращает описание ошибки, если она не связана с уникальностью
+
+    except Exception as e:
+        return False, str(e)  # Возвращает описание любой другой ошибки
+
+    finally:
+        if conn:
+            conn.close()
 
 
 # Функция для добавления задачи с категорией
 def add_task(name, description, creation_date, due_date, priority, status, category_name):
-    conn = sqlite3.connect('organizer.db')
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     # Находим ID категории по имени
@@ -59,7 +94,7 @@ def fetch_categories() -> List[Dict[str, int]]:
     :rtype: List[Dict[str, int]]
     """
 
-    conn = sqlite3.connect('organizer.db')
+    conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
 
     cursor.execute("""

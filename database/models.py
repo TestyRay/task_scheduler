@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     name TEXT NOT NULL,
     description TEXT,
     creation_date TEXT NOT NULL,
-    due_date TEXT,
+    due_date TEXT NOT NULL,
     priority INTEGER NOT NULL,
     status TEXT NOT NULL,
     category_id INTEGER,
