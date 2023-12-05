@@ -2,13 +2,15 @@ import pymorphy3
 import flet as ft
 
 from database import fetch_categories
+from utils import pluralize_word
 
 HEADER_COLOR_TEXT = "#FFFFFF"
 WIDGET_COLOR = "#041965"
 PINK_COLOR = "#eb06ff"
 
-
+# TODO. Подумать над задачами, которые выполняются несколько дней (дашборд)
 def main_window_view(page: ft.Page) -> ft.Container:
+
     # Сборка отображения категорий
     category_card = ft.Row(
         scroll="ALWAYS"
@@ -19,7 +21,7 @@ def main_window_view(page: ft.Page) -> ft.Container:
         ft.FloatingActionButton(
             icon=ft.icons.ADD,
             bgcolor=WIDGET_COLOR,
-            on_click=lambda _: page.go("/create_task"),
+            on_click=lambda _: page.go("/create_category"),
             width=187,
             height=110
         ),
@@ -29,9 +31,10 @@ def main_window_view(page: ft.Page) -> ft.Container:
         category_name = categories[index]["name"]
         task_count = categories[index]["task_count"]
 
-        morph = pymorphy3.MorphAnalyzer()
-        word = morph.parse("задание")[0]
-        task_word = word.make_agree_with_number(task_count).word
+        task_word = pluralize_word(
+            word="задание",
+            number=task_count,
+        )
 
         category_card.controls.append(
             ft.Container(
