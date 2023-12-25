@@ -2,7 +2,23 @@ import pymorphy3
 
 import flet as ft
 
+from plyer import notification
+
+
 # FLET
+
+def navigate_to_route(page, route, dlg=None):
+    page.go(route)
+    if dlg:
+        close_dialog_and_update(
+            dlg=dlg,
+            page=page,
+        )
+
+
+def close_dialog_and_update(dlg, page):
+    dlg.open = False
+    page.update()
 
 def show_alert_dialog(page, title, buttons, funcs, alignment):
     dlg = create_alert_dialog(
@@ -15,6 +31,7 @@ def show_alert_dialog(page, title, buttons, funcs, alignment):
     dlg.open = True
     page.update()
     return dlg
+
 def create_alert_dialog(title, text_button, func_button, alignment_button):
 
     alert_dialog = ft.AlertDialog(
@@ -43,5 +60,14 @@ def pluralize_word(word: str, number: int) -> str:
     parsed_word = morph.parse(word)[0]
 
     return parsed_word.make_agree_with_number(number).word
+
+
+# PLYER
+def send_notification(title, message):
+    notification.notify(
+        title=title,
+        message=message,
+        app_name='Планировщик задач'
+    )
 
 
